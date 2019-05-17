@@ -1,10 +1,10 @@
 # VERSION 1.10.2
 # AUTHOR: Matthieu "Puckel_" Roisil
 # DESCRIPTION: Basic Airflow container
-# BUILD: docker build --rm -t puckel/docker-airflow .
-# SOURCE: https://github.com/puckel/docker-airflow
+# BUILD: docker build --rm -t remix/docker-airflow .
+# SOURCE: https://github.com/remix/docker-airflow
 
-FROM python:3.6-slim
+FROM ubuntu:18.04
 LABEL maintainer="Puckel_"
 
 # Never prompts the user for choices on installation/configuration of packages
@@ -47,11 +47,17 @@ RUN set -ex \
         rsync \
         netcat \
         locales \
+        python3 \
+        python3-pip \
+        libpython3-dev \
+    && ln -s /usr/bin/python3 /usr/bin/python \
+    && ln -s /usr/bin/pip3 /usr/bin/pip \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
-    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
-    && pip install -U pip setuptools wheel \
+    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow
+
+RUN pip install setuptools wheel \
     && pip install pytz \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
